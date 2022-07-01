@@ -17,21 +17,24 @@
 package com.example.android.unscramble.ui.game
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.android.unscramble.R
 import com.example.android.unscramble.databinding.GameFragmentBinding
+import com.example.android.unscramble.viewModel.GameViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * Fragment where the game is played, contains the game logic.
  */
 class GameFragment : Fragment() {
 
-    private var score = 0
-    private var currentWordCount = 0
-    private var currentScrambledWord = "test"
+
+    private val gameViewModel: GameViewModel by viewModels()
 
 
     // Binding object instance with access to the views in the game_fragment.xml layout
@@ -42,11 +45,17 @@ class GameFragment : Fragment() {
     // first fragment
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout XML file and return a binding object instance
         binding = GameFragmentBinding.inflate(inflater, container, false)
+
+        Log.d("GameFragment", "GameFragment created/re-created!")
+
+        Log.d("GameFragment", "Word: ${gameViewModel.currentScrambledWord} " +
+                "Score: ${gameViewModel.score} WordCount: ${gameViewModel.currentWordCount}")
+
         return binding.root
     }
 
@@ -54,41 +63,60 @@ class GameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Setup a click listener for the Submit and Skip buttons.
-        binding.submit.setOnClickListener { onSubmitWord() }
-        binding.skip.setOnClickListener { onSkipWord() }
+        binding.btnSubmit.setOnClickListener { onSubmitWord() }
+        binding.btnSkip.setOnClickListener { onSkipWord() }
 
         // Update the UI
         updateNextWordOnScreen()
         binding.score.text = getString(R.string.score, 0)
         binding.wordCount.text = getString(
-                R.string.word_count, 0, MAX_NO_OF_WORDS)
+            R.string.word_count, 0, MAX_NO_OF_WORDS
+        )
     }
 
-    /*
-    * Checks the user's word, and updates the score accordingly.
-    * Displays the next scrambled word.
-    */
-    private fun onSubmitWord() {
-        currentScrambledWord = getNextScrambledWord()
-        currentWordCount++
-        score += SCORE_INCREASE
-        binding.wordCount.text = getString(R.string.word_count, currentWordCount, MAX_NO_OF_WORDS)
-        binding.score.text = getString(R.string.score, score)
-        setErrorTextField(false)
-        updateNextWordOnScreen()
-    }
-
-    /*
-     * Skips the current word without changing the score.
-     * Increases the word count.
-     */
     private fun onSkipWord() {
-        currentScrambledWord = getNextScrambledWord()
-        currentWordCount++
-        binding.wordCount.text = getString(R.string.word_count, currentWordCount, MAX_NO_OF_WORDS)
-        setErrorTextField(false)
-        updateNextWordOnScreen()
+        if (gameViewModel.nextWord()) {
+            setErrorTextField(false)
+            updateNextWordOnScreen()
+        } else {
+            showFinalScoreDialog()
+        }
     }
+
+    private fun onSubmitWord() {
+
+        val playerWord = binding.textFieldInputWordText.text.toString()
+
+        if (gameViewModel.isUserWordCorrect(playerWord)) {
+            setErrorTextField(false)
+            if (gameViewModel.nextWord()) {
+                updateNextWordOnScreen()
+            } else {
+                showFinalScoreDialog()
+            }
+        } else {
+            setErrorTextField(true)
+        }
+        updateNextWordOnScreen()
+
+    }
+
+
+    private fun showFinalScoreDialog() {
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.congratulations)
+            .setMessage(getString(R.string.score, gameViewModel.score))
+            .setCancelable(false)
+            .setNegativeButton(getString(R.string.exit)) { _, _ ->
+                exitGame()
+            }
+            .setPositiveButton(getString(R.string.play_again)) { _, _ ->
+                restartGame()
+            }
+            .show()
+    }
+
 
     /*
      * Gets a random word for the list of words and shuffles the letters in it.
@@ -99,11 +127,13 @@ class GameFragment : Fragment() {
         return String(tempWord)
     }
 
+
     /*
      * Re-initializes the data in the ViewModel and updates the views with the new data, to
      * restart the game.
      */
     private fun restartGame() {
+        gameViewModel.reinitializeData()
         setErrorTextField(false)
         updateNextWordOnScreen()
     }
@@ -115,16 +145,22 @@ class GameFragment : Fragment() {
         activity?.finish()
     }
 
+    override fun onDetach() {
+        super.onDetach()
+
+        Log.d("GameFragment", "GameFragment destroyed!")
+    }
+
     /*
     * Sets and resets the text field error status.
     */
     private fun setErrorTextField(error: Boolean) {
         if (error) {
-            binding.textField.isErrorEnabled = true
-            binding.textField.error = getString(R.string.try_again)
+            binding.textViewWord.isErrorEnabled = true
+            binding.textFieldInputWordText.error = getString(R.string.try_again)
         } else {
-            binding.textField.isErrorEnabled = false
-            binding.textInputEditText.text = null
+            binding.textViewWord.isErrorEnabled = false
+            binding.textFieldInputWordText.text = null
         }
     }
 
@@ -132,6 +168,6 @@ class GameFragment : Fragment() {
      * Displays the next scrambled word on screen.
      */
     private fun updateNextWordOnScreen() {
-        binding.textViewUnscrambledWord.text = currentScrambledWord
+        binding.textViewUnscrambledWord.text = gameViewModel.currentScrambledWord
     }
 }

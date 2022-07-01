@@ -27,26 +27,26 @@
         tools:context=".ui.game.GameFragment">
 
         <Button
-            android:id="@+id/skip"
+            android:id="@+id/btn_skip"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_padding"
             android:layout_marginEnd="@dimen/default_padding"
             android:text="@string/skip"
-            app:layout_constraintBaseline_toBaselineOf="@+id/submit"
-            app:layout_constraintEnd_toStartOf="@+id/submit"
+            app:layout_constraintBaseline_toBaselineOf="@+id/btn_submit"
+            app:layout_constraintEnd_toStartOf="@+id/btn_submit"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/submit"
+            android:id="@+id/btn_submit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_margin"
             android:text="@string/submit"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/skip"
-            app:layout_constraintTop_toBottomOf="@+id/textField" />
+            app:layout_constraintStart_toEndOf="@+id/btn_skip"
+            app:layout_constraintTop_toBottomOf="@+id/textView_word" />
 
         <TextView
             android:id="@+id/textView_instructions"
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:text="@string/instructions"
             android:textSize="17sp"
-            app:layout_constraintBottom_toTopOf="@+id/textField"
+            app:layout_constraintBottom_toTopOf="@+id/textView_word"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_unscrambled_word" />
@@ -70,7 +70,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/word_count"
-            tools:text="Scramble word" />
+            tools:text="Desembaralhe a Palavra" />
 
         <TextView
             android:id="@+id/word_count"
@@ -95,7 +95,7 @@
             tools:text="Score: 20" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField"
+            android:id="@+id/textView_word"
             style="@style/Widget.Unscramble.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -103,13 +103,13 @@
             android:hint="@string/enter_your_word"
             app:errorIconDrawable="@drawable/ic_error"
             app:helperTextTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            app:layout_constraintBottom_toTopOf="@+id/submit"
+            app:layout_constraintBottom_toTopOf="@+id/btn_submit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_instructions">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/text_input_edit_text"
+                android:id="@+id/textField_input_word_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textPersonName|textNoSuggestions"
