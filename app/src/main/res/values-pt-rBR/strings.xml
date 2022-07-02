@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Palavras Embaralhadas</string>
+    <string name="instructions">Desembaralhe a palavra usando todas as letras</string>
+    <string name="skip">Pular</string>
+    <string name="submit">Enviar</string>
+    <string name="score">Pontução: %d</string>
+    <string name="word_count">%d de %d palavras</string>
+    <string name="enter_your_word">Insira sua palavra</string>
+    <string name="congratulations">Parabéns!!</string>
+    <string name="you_scored">"Sua pontução: %d"</string>
+    <string name="exit">Sair</string>
+    <string name="play_again">Jogar novamente!</string>
+    <string name="try_again">Tentar novamente!</string>
+</resources>
